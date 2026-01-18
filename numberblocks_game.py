@@ -45,9 +45,12 @@ def draw_instructions():
     )
 
 def draw_count():
-    ui.goto(-300, 70)
-    ui.color("black")
-    ui.write(
+    count_ui = turtle.Turtle()
+    count_ui.hideturtle()
+    count_ui.penup()
+    count_ui.goto(-300, 70)
+    count_ui.color("black")
+    count_ui.write(
         f"COUNT : {len(blocks)}",
         align="left",
         font=("Arial", 18, "bold")
@@ -94,6 +97,45 @@ def draw_ui():
     draw_instructions()
     draw_count()
 
+def draw_arm(t, base_x, base_y, side):
+    t.color("brown")
+    t.penup()
+    t.goto(base_x, base_y+10)
+    t.setheading(0)
+    t.pendown()
+    t.begin_fill()
+    t.goto(base_x+side*30, base_y-30)
+    t.goto(base_x+side*15, base_y-45)
+    t.goto(base_x, base_y - 30)
+    t.goto(base_x, base_y + 10)
+    t.end_fill()
+    t.penup()
+    t.goto(base_x+side*15, base_y-45)
+    t.setheading(0)
+    t.pendown()
+    t.begin_fill()
+    t.circle(15)
+    t.end_fill()
+
+def draw_leg(t, base_x, base_y, side):
+    t.color("brown")
+    t.penup()
+    t.goto(base_x+side*15, base_y-50)
+    t.pendown()
+    t.pensize(27.5)
+    t.goto(base_x+side*20, base_y-75)
+    t.pensize(1)
+
+def draw_mouth(t, x, y):
+    t.color("brown")
+    t.pensize(10)
+    t.penup()
+    t.goto(x, y-37.5)
+    t.setheading(-30)
+    t.pendown()
+    t.circle(25, 120)
+    t.pensize(1)
+
 def spawn_numberblocks():
     global last_spawn_time
     now = time.time()
@@ -102,11 +144,20 @@ def spawn_numberblocks():
     last_spawn_time = now
     t = turtle.Turtle()
     blocks.append(t)
-    x = random.randint(-250, 250)
-    y = random.randint(-250, 250)
+    x = random.randint(-500, 500)
+    y = random.randint(-500, 500)
+    while True:
+        if (-325 < x < 225 and 50 < y < 50) or (250 < x < 370 and 130 < y < 250):
+            x = random.randint(-500, 500)
+            y = random.randint(-500, 500)
+        else:
+            break       
     t.hideturtle()
-    t.pencolor("red")
     t.speed(0)
+    draw_arm(t, x-50, y, -1)
+    draw_arm(t, x+50, y,  1)
+    draw_leg(t, x, y, -1)
+    draw_leg(t, x, y,  1)
     t.penup()
     t.goto(x-50, y-50)
     t.pendown()
@@ -115,6 +166,13 @@ def spawn_numberblocks():
     for _ in range(4):
         t.forward(100)
         t.left(90)
+    t.end_fill()
+    t.penup()
+    t.goto(x, y-30)
+    t.pendown()
+    t.color("brown")
+    t.begin_fill()
+    t.circle(40)
     t.end_fill()
     t.penup()
     t.goto(x, y-20)
@@ -141,6 +199,8 @@ def spawn_numberblocks():
     t.pendown()
     t.color("black")
     t.write("I", font=("Arial", 50, "bold"))
+    draw_mouth(t, x, y)
+    t.penup()
     draw_ui()
 
 def click_handler(x, y):
